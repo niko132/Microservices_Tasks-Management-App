@@ -1,0 +1,41 @@
+get:
+  summary: Retrieve the specified user
+  operationId: getUser
+  tags:
+    - users
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../parameters/user_id.yaml'
+  responses:
+    '200':
+      description: Successfully retrieved the user information
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/user.yaml'
+    '400':
+      $ref: '../responses/UserDoesNotExistError.yaml'
+    '401':
+      $ref: '../responses/UnauthorizedError.yaml'
+
+delete:
+  summary: Delete the specified user
+  operationId: deleteUser
+  tags:
+    - users
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../parameters/user_id.yaml'
+  responses:
+    '200':
+      description: Successfully deleted the user information
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/user.yaml'
+    '400':
+      $ref: '../responses/UserDoesNotExistError.yaml'
+    '401':
+      $ref: '../responses/UnauthorizedError.yaml'

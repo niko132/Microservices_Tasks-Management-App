@@ -1,0 +1,21 @@
+post:
+  summary: Login
+  operationId: login
+  tags:
+    - users
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/login_credentials.yaml'
+  responses:
+    '200':
+      description: Valid login
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/user_with_token.yaml'
+    '400':
+      description: Wrong Credentials
+      $ref: '../responses/UnexpectedError.yaml'

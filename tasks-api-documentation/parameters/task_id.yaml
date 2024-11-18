@@ -1,0 +1,6 @@
+name: taskId
+in: path
+required: true
+description: The id of the task to retrieve
+schema:
+  type: integer

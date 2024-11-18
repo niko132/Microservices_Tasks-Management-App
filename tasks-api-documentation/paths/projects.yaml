@@ -1,0 +1,43 @@
+get:
+  summary: Retrieve all projects
+  operationId: getProjects
+  tags:
+    - projects
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../parameters/project_user_id.yaml'
+  responses:
+    '200':
+      description: Successfully retrieved all projects
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../schemas/project.yaml'
+    '401':
+      $ref: '../responses/UnauthorizedError.yaml'
+
+post:
+  summary: Create a new projects
+  operationId: createProject
+  tags:
+    - projects
+  security:
+    - bearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/project_no_id.yaml'
+  responses:
+    '200':
+      description: Successfully created the project
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/project.yaml'
+    '401':
+      $ref: '../responses/UnauthorizedError.yaml'

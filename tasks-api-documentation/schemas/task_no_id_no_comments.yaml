@@ -1,0 +1,17 @@
+type: object
+required:
+  - projectId
+  - title
+  - description
+  - assigneeIds
+properties:
+  projectId:
+    type: integer
+  title:
+    type: string
+  description:
+    type: string
+  assignees:
+    type: array
+    items:
+      type: integer

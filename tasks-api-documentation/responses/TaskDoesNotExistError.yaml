@@ -1,0 +1,10 @@
+description: Task does not exist
+content:
+  application/json:
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+      example:
+        message: "Task does not exist"

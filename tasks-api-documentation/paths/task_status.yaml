@@ -1,0 +1,26 @@
+put:
+  summary: Assign the status to the specified task
+  operationId: taskSetStatus
+  tags:
+    - tasks
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../parameters/task_id.yaml'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/task_status.yaml'
+  responses:
+    '200':
+      description: Successfully set the status of the task
+      content:
+        application/json:
+          schema:
+            type: string
+    '400':
+      $ref: '../responses/TaskDoesNotExistError.yaml'
+    '401':
+      $ref: '../responses/UnauthorizedError.yaml'

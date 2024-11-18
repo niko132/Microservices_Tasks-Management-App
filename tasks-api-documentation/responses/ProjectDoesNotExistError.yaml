@@ -1,0 +1,10 @@
+description: Project does not exist
+content:
+  application/json:
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+      example:
+        message: "Project does not exist"

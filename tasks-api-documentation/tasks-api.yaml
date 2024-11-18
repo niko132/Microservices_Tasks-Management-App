@@ -1,0 +1,58 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Tasks Api
+  description: An Api to create and manage Tasks in a collaborative way.
+
+servers:
+  - url: http://localhost/api
+  - url: https://185.128.119.187/api
+
+security:
+  - BasicAuth: []
+
+paths:
+  /users:
+    $ref: './paths/users.yaml'
+  /users/{userId}:
+    $ref: './paths/user.yaml'
+  /users/login:
+    $ref: './paths/user_login.yaml'
+  
+  /projects:
+    $ref: './paths/projects.yaml'
+
+  /projects/{projectId}:
+    $ref: './paths/project.yaml'
+
+  /projects/{projectId}/members:
+    $ref: './paths/project_members.yaml'
+  
+  /tasks:
+    $ref: './paths/tasks.yaml'
+
+  /tasks/{taskId}:
+    $ref: './paths/task.yaml'
+
+  /tasks/{taskId}/assignees:
+    $ref: './paths/task_assignees.yaml'
+
+  /tasks/{taskId}/assignee/{userId}:
+    $ref: './paths/task_assignee.yaml'
+  
+  /tasks/{taskId}/status:
+    $ref: './paths/task_status.yaml'
+  
+  /tasks/{taskId}/comments:
+    $ref: './paths/task_comments.yaml'
+
+  /tasks/{taskId}/comments/{commentId}:
+    $ref: './paths/task_comment.yaml'
+  
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

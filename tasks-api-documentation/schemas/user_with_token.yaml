@@ -1,0 +1,15 @@
+type: object
+required:
+  - id
+  - username
+  - email
+  - token
+properties:
+  id:
+    type: integer
+  username:
+    type: string
+  email:
+    type: string
+  token:
+    type: string

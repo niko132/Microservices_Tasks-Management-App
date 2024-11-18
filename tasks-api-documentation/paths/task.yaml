@@ -1,0 +1,62 @@
+get:
+  summary: Retrieve the specified task
+  operationId: getTask
+  tags:
+    - tasks
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../parameters/task_id.yaml'
+  responses:
+    '200':
+      description: Successfully retrieved the task information
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/task.yaml'
+    '400':
+      $ref: '../responses/TaskDoesNotExistError.yaml'
+    '401':
+      $ref: '../responses/UnauthorizedError.yaml'
+
+put:
+  summary: Update the specified task
+  operationId: putTask
+  tags:
+    - tasks
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../parameters/task_id.yaml'
+  responses:
+    '200':
+      description: Successfully updated the task
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/task_no_id_no_comments.yaml'
+    '400':
+      $ref: '../responses/TaskDoesNotExistError.yaml'
+    '401':
+      $ref: '../responses/UnauthorizedError.yaml'
+
+delete:
+  summary: Delete the specified task
+  operationId: deleteTask
+  tags:
+    - tasks
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../parameters/task_id.yaml'
+  responses:
+    '200':
+      description: Successfully deleted the task
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/task.yaml'
+    '400':
+      $ref: '../responses/TaskDoesNotExistError.yaml'
+    '401':
+      $ref: '../responses/UnauthorizedError.yaml'

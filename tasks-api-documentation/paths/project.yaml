@@ -1,0 +1,62 @@
+get:
+  summary: Retrieve the specified project
+  operationId: getProject
+  tags:
+    - projects
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../parameters/project_id.yaml'
+  responses:
+    '200':
+      description: Successfully retrieved the project information
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/project.yaml'
+    '400':
+      $ref: '../responses/ProjectDoesNotExistError.yaml'
+    '401':
+      $ref: '../responses/UnauthorizedError.yaml'
+
+put:
+  summary: Update the specified project
+  operationId: putProject
+  tags:
+    - projects
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../parameters/project_id.yaml'
+  responses:
+    '200':
+      description: Successfully updated the project
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/project_no_id.yaml'
+    '400':
+      $ref: '../responses/ProjectDoesNotExistError.yaml'
+    '401':
+      $ref: '../responses/UnauthorizedError.yaml'
+
+delete:
+  summary: Delete the specified project
+  operationId: deleteProject
+  tags:
+    - projects
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../parameters/project_id.yaml'
+  responses:
+    '200':
+      description: Successfully deleted the project
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/project.yaml'
+    '400':
+      $ref: '../responses/ProjectDoesNotExistError.yaml'
+    '401':
+      $ref: '../responses/UnauthorizedError.yaml'

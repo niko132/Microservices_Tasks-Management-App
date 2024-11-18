@@ -1,0 +1,23 @@
+delete:
+  summary: Remove the specified assignee from the specified task
+  operationId: removeAssignee
+  tags:
+    - tasks
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../parameters/task_id.yaml'
+    - $ref: '../parameters/task_assignee_id.yaml'
+  responses:
+    '200':
+      description: Successfully removed the assignee from the task
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../schemas/task_assignee.yaml'
+    '400':
+      $ref: '../responses/TaskDoesNotExistError.yaml'
+    '401':
+      $ref: '../responses/UnauthorizedError.yaml'

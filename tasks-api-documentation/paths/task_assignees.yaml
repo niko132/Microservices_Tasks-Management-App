@@ -1,0 +1,53 @@
+get:
+  summary: Retrieve all the assignees of the specified task
+  operationId: getAssignees
+  tags:
+    - tasks
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../parameters/task_id.yaml'
+  responses:
+    '200':
+      description: Successfully retrieved all assignees of the task
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../schemas/task_assignee.yaml'
+    '400':
+      $ref: '../responses/TaskDoesNotExistError.yaml'
+    '401':
+      $ref: '../responses/UnauthorizedError.yaml'
+
+post:
+  summary: Add a new assignee to the specified task
+  operationId: addAssignee
+  tags:
+    - tasks
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../parameters/task_id.yaml'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '../schemas/task_assignee.yaml'
+  responses:
+    '200':
+      description: Successfully added the assignee to the task
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../schemas/task_assignee.yaml'
+    '400':
+      $ref: '../responses/TaskDoesNotExistError.yaml'
+    '401':
+      $ref: '../responses/UnauthorizedError.yaml'

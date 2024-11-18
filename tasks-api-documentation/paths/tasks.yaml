@@ -1,0 +1,43 @@
+get:
+  summary: Retrieve all tasks
+  operationId: getTasks
+  tags:
+    - tasks
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../parameters/task_project_id.yaml'
+  responses:
+    '200':
+      description: Successfully retrieved all tasks
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../schemas/task.yaml'
+    '401':
+      $ref: '../responses/UnauthorizedError.yaml'
+
+post:
+  summary: Create a new task
+  operationId: createTask
+  tags:
+    - tasks
+  security:
+    - bearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/task_no_id.yaml'
+  responses:
+    '200':
+      description: Successfully created the task
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/task.yaml'
+    '401':
+      $ref: '../responses/UnauthorizedError.yaml'

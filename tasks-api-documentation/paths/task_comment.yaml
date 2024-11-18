@@ -1,0 +1,43 @@
+get:
+  summary: Retrieve the specified comment of the specified task
+  operationId: getTaskComment
+  tags:
+    - tasks
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../parameters/task_id.yaml'
+    - $ref: '../parameters/task_comment_id.yaml'
+  responses:
+    '200':
+      description: Successfully retrieved the comment of the task
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/task_comment.yaml'
+    '400':
+      $ref: '../responses/TaskDoesNotExistError.yaml'
+    '401':
+      $ref: '../responses/UnauthorizedError.yaml'
+
+delete:
+  summary: Deletes the specified comment of the specified task
+  operationId: deleteComment
+  tags:
+    - tasks
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../parameters/task_id.yaml'
+    - $ref: '../parameters/task_comment_id.yaml'
+  responses:
+    '200':
+      description: Successfully deleted the comment of the task
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/task_comment.yaml'
+    '400':
+      $ref: '../responses/TaskDoesNotExistError.yaml'
+    '401':
+      $ref: '../responses/UnauthorizedError.yaml'

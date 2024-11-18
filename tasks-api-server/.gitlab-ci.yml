@@ -1,0 +1,107 @@
+#
+# .gitlab-ci.yaml
+# https://cylab.be/blog/229/continuous-deployment-with-gitlab-and-docker
+#
+
+# TODO: uncomment to execute only on dev branch
+#workflow:
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "dev"'
+
+stages:
+  - build_projects
+  - build_tasks
+  - build_users
+  - deploy
+
+build_projects:
+  stage: build_projects
+  ## Run on a gitlab-runner that is configured with docker-in-docker
+  tags:
+    - dind
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  variables:
+    DOCKER_DIND: "docker:20.10.16-dind"                                                          
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: "tcp://docker:2375"
+    FF_NETWORK_PER_BUILD: "true"
+  before_script:
+    - docker login -u $CI_REGISTRY_USER 
+                              -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build --tag $CI_REGISTRY_IMAGE/projects:$CI_COMMIT_SHA
+        --tag $CI_REGISTRY_IMAGE/projects:latest -f ./projects/Dockerfile .
+    - docker push $CI_REGISTRY_IMAGE/projects:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE/projects:latest
+
+build_tasks:
+  stage: build_tasks
+  ## Run on a gitlab-runner that is configured with docker-in-docker
+  tags:
+    - dind
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  variables:
+    DOCKER_DIND: "docker:20.10.16-dind"                                                          
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: "tcp://docker:2375"
+    FF_NETWORK_PER_BUILD: "true"
+  before_script:
+    - docker login -u $CI_REGISTRY_USER 
+                              -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build --tag $CI_REGISTRY_IMAGE/tasks:$CI_COMMIT_SHA
+        --tag $CI_REGISTRY_IMAGE/tasks:latest -f ./tasks/Dockerfile .
+    - docker push $CI_REGISTRY_IMAGE/tasks:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE/tasks:latest
+
+build_users:
+  stage: build_users
+  ## Run on a gitlab-runner that is configured with docker-in-docker
+  tags:
+    - dind
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  variables:
+    DOCKER_DIND: "docker:20.10.16-dind"                                                          
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: "tcp://docker:2375"
+    FF_NETWORK_PER_BUILD: "true"
+  before_script:
+    - docker login -u $CI_REGISTRY_USER 
+                              -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build --tag $CI_REGISTRY_IMAGE/users:$CI_COMMIT_SHA
+        --tag $CI_REGISTRY_IMAGE/users:latest -f ./users/Dockerfile .
+    - docker push $CI_REGISTRY_IMAGE/users:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE/users:latest
+
+deploy:
+  stage: deploy
+  image: alpine
+  before_script:
+    # install envsubst and ssh-add
+    - apk add gettext openssh-client
+  script:
+    # create the new docker-compose.yml
+    - envsubst < docker-compose.tmpl > docker-compose.yml
+    # start ssh-agent and import ssh private key
+    - eval `ssh-agent`
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    # add server to list of known hosts
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - touch ~/.ssh/known_hosts
+    - chmod 600 ~/.ssh/known_hosts
+    - echo $SSH_HOST_KEY >> ~/.ssh/known_hosts
+    # upload docker-compose to the server
+    - scp docker-compose.yml tasks_api_docker_user@185.128.119.187:/home/tasks_api_docker_user/
+    # docker login and restart services
+    - ssh tasks_api_docker_user@185.128.119.187 "cd /home/tasks_api_docker_user; 
+        docker login -u $CI_REGISTRY_USER 
+          -p $CI_REGISTRY_PASSWORD $CI_REGISTRY;
+        docker compose up -d"

@@ -1,0 +1,14 @@
+type: object
+required:
+  - name
+  - ownerId
+  - memberIds
+properties:
+  name:
+    type: string
+  ownerId:
+    type: integer
+  memberIds:
+    type: array
+    items:
+      type: integer

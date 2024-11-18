@@ -1,0 +1,6 @@
+name: projectId
+in: query
+required: false
+description: The id of the project to retrieve the tasks from
+schema:
+  type: integer

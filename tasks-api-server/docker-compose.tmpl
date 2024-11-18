@@ -1,0 +1,141 @@
+version: "3.8"
+services:
+  reverse-proxy:
+    image: traefik:latest
+    command:
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web-secure.address=:443" # Declares the web-secure entrypoint in Traefik
+      - "--providers.file.directory=/configuration/"
+      - "--providers.file.watch=true"
+      - "--entrypoints.dashboard.address=:8080"
+      - "--api.dashboard=true"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.dashboard.rule=(PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+      - traefik.http.routers.dashboard.entrypoints=dashboard
+      - traefik.http.routers.dashboard.service=api@internal
+      - traefik.http.routers.dashboard.middlewares=dashboard_auth
+      - traefik.http.middlewares.dashboard_auth.basicauth.users=$CI_TRAEFIK_DASHBOARD_USERS
+    ports:
+      - "80:80"
+      - "443:443" # Docker sends requests on port 443 to Traefik on port 443
+      - "8080:8080"
+    networks:
+      - "api-net"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /home/tasks_api_docker_user/traefik/configuration/:/configuration/
+
+  projects:
+    image: $CI_REGISTRY_IMAGE/projects:$CI_COMMIT_SHA
+    command: gunicorn -b 0.0.0.0:5000 --threads=2 --log-level debug projects:app
+    networks:
+      - "api-net"
+    expose:
+      - 5000
+    ports:
+      - "5000"
+    environment:
+      - SCRIPT_NAME=/api
+      - DATABASE_URL=postgresql://projects_api:projects_api_123@db-projects:5432/projects_db
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - API_URL_PREFIX=${API_URL_PREFIX}
+    depends_on:
+      - db-projects
+    volumes:
+      - /home/tasks_api_docker_user/traefik/configuration/:/certs/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.projects.rule=PathPrefix(`/api/projects`)"
+      - "traefik.http.routers.projects.entrypoints=web-secure"
+      - "traefik.http.routers.projects.tls=true"
+
+  tasks:
+    image: $CI_REGISTRY_IMAGE/tasks:$CI_COMMIT_SHA
+    command: gunicorn -b 0.0.0.0:5000 --threads=2 --log-level debug tasks:app
+    networks:
+      - "api-net"
+    expose:
+      - 5000
+    ports:
+      - "5000"
+    environment:
+      - SCRIPT_NAME=/api
+      - DATABASE_URL=postgresql://tasks_api:tasks_api_123@db-tasks:5432/tasks_db
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - API_URL_PREFIX=${API_URL_PREFIX}
+    depends_on:
+      - db-tasks
+    volumes:
+      - /home/tasks_api_docker_user/traefik/configuration/:/certs/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tasks.rule=PathPrefix(`/api/tasks`)"
+      - "traefik.http.routers.tasks.entrypoints=web-secure"
+      - "traefik.http.routers.tasks.tls=true"
+  
+  users:
+    image: $CI_REGISTRY_IMAGE/users:$CI_COMMIT_SHA
+    command: gunicorn -b 0.0.0.0:5000 --threads=2 --log-level debug users:app
+    networks:
+      - "api-net"
+    expose:
+      - 5000
+    ports:
+      - "5000"
+    environment:
+      - SCRIPT_NAME=/api
+      - DATABASE_URL=postgresql://users_api:users_api_123@db-users:5432/users_db
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - API_URL_PREFIX=${API_URL_PREFIX}
+    depends_on:
+      - db-users
+    volumes:
+      - /home/tasks_api_docker_user/traefik/configuration/:/certs/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.users.rule=PathPrefix(`/api/users`)"
+      - "traefik.http.routers.users.entrypoints=web-secure"
+      - "traefik.http.routers.users.tls=true"
+
+  db-projects:
+    image: postgres:13
+    networks:
+      - "api-net"
+    volumes:
+      - volume_db_projects:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=projects_api
+      - POSTGRES_PASSWORD=projects_api_123
+      - POSTGRES_DB=projects_db
+
+  db-tasks:
+    image: postgres:13
+    networks:
+      - "api-net"
+    volumes:
+      - volume_db_tasks:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=tasks_api
+      - POSTGRES_PASSWORD=tasks_api_123
+      - POSTGRES_DB=tasks_db
+
+  db-users:
+    image: postgres:13
+    networks:
+      - "api-net"
+    volumes:
+      - volume_db_users:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=users_api
+      - POSTGRES_PASSWORD=users_api_123
+      - POSTGRES_DB=users_db
+
+volumes:
+  volume_db_users:
+  volume_db_tasks:
+  volume_db_projects:
+
+networks:
+  api-net:

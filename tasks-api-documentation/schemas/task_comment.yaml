@@ -1,0 +1,15 @@
+type: object
+required:
+  - id
+  - taskId
+  - userId
+  - text
+properties:
+  id:
+    type: integer
+  taskId:
+    type: integer
+  userId:
+    type: integer
+  text:
+    type: string

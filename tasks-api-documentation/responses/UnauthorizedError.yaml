@@ -1,0 +1,10 @@
+description: Unauthorized request
+content:
+  application/json:
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+      example:
+        message: "Authentication Token is missing!"

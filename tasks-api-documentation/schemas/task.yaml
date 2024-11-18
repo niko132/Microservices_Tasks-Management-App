@@ -1,0 +1,25 @@
+type: object
+required:
+  - id
+  - projectId
+  - title
+  - description
+  - assigneeIds
+  - comments
+properties:
+  id:
+    type: integer
+  projectId:
+    type: integer
+  title:
+    type: string
+  description:
+    type: string
+  assignees:
+    type: array
+    items:
+      type: integer
+  comments:
+    type: array
+    items:
+      $ref: '../schemas/task_comment.yaml'

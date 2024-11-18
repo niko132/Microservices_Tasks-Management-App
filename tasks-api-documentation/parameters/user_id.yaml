@@ -1,0 +1,6 @@
+name: userId
+in: path
+required: true
+description: The id of the user to retrieve
+schema:
+  type: integer

@@ -1,0 +1,49 @@
+get:
+  summary: Retrieve all comments of the specified task
+  operationId: getTaskComments
+  tags:
+    - tasks
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../parameters/task_id.yaml'
+  responses:
+    '200':
+      description: Successfully retrieved all task comments
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '../schemas/task_comment.yaml'
+    '400':
+      $ref: '../responses/TaskDoesNotExistError.yaml'
+    '401':
+      $ref: '../responses/UnauthorizedError.yaml'
+
+post:
+  summary: Add a new comment to the specified task
+  operationId: addTaskComment
+  tags:
+    - tasks
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../parameters/task_id.yaml'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/task_comment.yaml'
+  responses:
+    '200':
+      description: Successfully added the comment to the task
+      content:
+        application/json:
+          schema:
+            $ref: '../schemas/task_comment_no_id.yaml'
+    '400':
+      $ref: '../responses/TaskDoesNotExistError.yaml'
+    '401':
+      $ref: '../responses/UnauthorizedError.yaml'

@@ -1,0 +1,12 @@
+type: object
+required:
+  - taskId
+  - userId
+  - text
+properties:
+  taskId:
+    type: integer
+  userId:
+    type: integer
+  text:
+    type: string

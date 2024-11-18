@@ -1,0 +1,6 @@
+name: userId
+in: query
+required: false
+description: The id of the user to retrieve the projects from
+schema:
+  type: integer
